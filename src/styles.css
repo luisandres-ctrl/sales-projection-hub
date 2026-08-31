@@ -142,3 +142,112 @@
     color: var(--color-foreground);
   }
 }
+
+/* ==========================================================================
+   Sales Forcaster by Molten Logistics — mockup theme (Bootstrap 5 + brand)
+   Paleta: #f2930d naranja / #626365 gris / #1c3c2c verde profundo / #141c1c casi negro
+   ========================================================================== */
+:root {
+  --ml-orange: #f2930d;
+  --ml-orange-soft: #ffb547;
+  --ml-gray: #626365;
+  --ml-green: #1c3c2c;
+  --ml-ink: #141c1c;
+  --ml-surface: #1b2422;
+  --ml-line: rgba(242, 147, 13, 0.18);
+  --ml-text: #eef2ef;
+  --ml-text-dim: #a7aeab;
+}
+
+body.ml-app {
+  background: radial-gradient(120% 90% at 15% -10%, #1c3c2c 0%, #141c1c 55%, #101616 100%);
+  color: var(--ml-text);
+  font-family: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.ml-display { font-weight: 800; letter-spacing: -0.02em; }
+.ml-eyebrow {
+  text-transform: uppercase; letter-spacing: 0.18em;
+  font-size: 0.7rem; font-weight: 700; color: var(--ml-orange);
+}
+.ml-dim { color: var(--ml-text-dim); }
+
+.ml-card {
+  background: linear-gradient(180deg, rgba(28, 60, 44, 0.55), rgba(20, 28, 28, 0.85));
+  border: 1px solid var(--ml-line);
+  border-radius: 18px;
+}
+.ml-card-plain { background: var(--ml-surface); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; }
+
+.ml-btn-primary {
+  background: var(--ml-orange); border: none; color: var(--ml-ink);
+  font-weight: 700; border-radius: 12px;
+}
+.ml-btn-primary:hover, .ml-btn-primary:focus { background: var(--ml-orange-soft); color: var(--ml-ink); }
+.ml-btn-ghost {
+  background: transparent; border: 1px solid rgba(255,255,255,0.18);
+  color: var(--ml-text); font-weight: 600; border-radius: 12px;
+}
+.ml-btn-ghost:hover { background: rgba(255,255,255,0.06); color: var(--ml-text); }
+
+.ml-input {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  color: var(--ml-text); border-radius: 12px; padding: 0.7rem 0.9rem;
+}
+.ml-input::placeholder { color: #7d8582; }
+.ml-input:focus {
+  background: rgba(255,255,255,0.07); color: var(--ml-text);
+  border-color: var(--ml-orange); box-shadow: 0 0 0 3px rgba(242,147,13,0.2);
+}
+
+.ml-chip {
+  border: 1px solid var(--ml-line); background: rgba(242,147,13,0.08);
+  color: var(--ml-text); border-radius: 999px; padding: 0.35rem 0.8rem;
+  font-size: 0.8rem; font-weight: 600;
+}
+.ml-chip.active { background: var(--ml-orange); color: var(--ml-ink); border-color: var(--ml-orange); }
+
+.ml-nav {
+  background: rgba(20, 28, 28, 0.9);
+  border-bottom: 1px solid var(--ml-line);
+  backdrop-filter: blur(10px);
+}
+.ml-tabbar {
+  position: sticky; bottom: 0; z-index: 20;
+  background: rgba(20, 28, 28, 0.95);
+  border-top: 1px solid var(--ml-line);
+  backdrop-filter: blur(10px);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.ml-tab { color: var(--ml-text-dim); font-size: 0.7rem; font-weight: 600; background: none; border: 0; }
+.ml-tab i { display: block; font-size: 1.15rem; }
+.ml-tab.active { color: var(--ml-orange); }
+
+.ml-row { border-bottom: 1px solid rgba(255,255,255,0.06); }
+.ml-row:last-child { border-bottom: 0; }
+
+.ml-pill-up { color: #6ee7a8; }
+.ml-pill-down { color: #ff8f7a; }
+
+.ml-logo-mark {
+  width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto;
+  background: linear-gradient(140deg, var(--ml-orange), #b8620a);
+  color: var(--ml-ink); font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.ml-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--ml-text);
+  color: var(--ml-text);
+}
+.ml-table > :not(caption) > * > * { background: transparent; color: inherit; }
+
+.form-range { --bs-form-range-thumb-bg: var(--ml-orange); }
+.form-range::-webkit-slider-thumb { background: var(--ml-orange); }
+.form-range::-moz-range-thumb { background: var(--ml-orange); }
+.form-range::-webkit-slider-runnable-track { background: rgba(255,255,255,0.18); height: 0.4rem; border-radius: 999px; }
+.form-range::-moz-range-track { background: rgba(255,255,255,0.18); height: 0.4rem; border-radius: 999px; }
