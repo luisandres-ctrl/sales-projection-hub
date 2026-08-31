@@ -245,3 +245,9 @@ body.ml-app {
   color: var(--ml-text);
 }
 .ml-table > :not(caption) > * > * { background: transparent; color: inherit; }
+
+.form-range { --bs-form-range-thumb-bg: var(--ml-orange); }
+.form-range::-webkit-slider-thumb { background: var(--ml-orange); }
+.form-range::-moz-range-thumb { background: var(--ml-orange); }
+.form-range::-webkit-slider-runnable-track { background: rgba(255,255,255,0.18); height: 0.4rem; border-radius: 999px; }
+.form-range::-moz-range-track { background: rgba(255,255,255,0.18); height: 0.4rem; border-radius: 999px; }
