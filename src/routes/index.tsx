@@ -679,7 +679,7 @@ function SalesForcasterMockup() {
                   </div>
 
                   <div className="table-responsive mt-4">
-                    <table className="table table-borderless align-middle mb-0" style={{ color: "var(--ml-text)" }}>
+                    <table className="table table-borderless align-middle mb-0 ml-table">
                       <thead className="small ml-dim">
                         <tr>
                           <th>Mes</th>

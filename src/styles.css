@@ -238,3 +238,10 @@ body.ml-app {
   color: var(--ml-ink); font-weight: 800;
   display: flex; align-items: center; justify-content: center;
 }
+
+.ml-table {
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--ml-text);
+  color: var(--ml-text);
+}
+.ml-table > :not(caption) > * > * { background: transparent; color: inherit; }
