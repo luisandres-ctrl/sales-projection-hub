@@ -17,10 +17,14 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" />
 <style>
+/* Molten Logistics palette
+   #f2930d orange · #626365 gray · #1c3c2c deep green · #141c1c near-black */
 :root{
   --ml-orange:#f2930d; --ml-orange-soft:#ffb547; --ml-gray:#626365;
   --ml-green:#1c3c2c; --ml-ink:#141c1c; --ml-surface:#1b2422;
-  --ml-line:rgba(242,147,13,.18); --ml-text:#eef2ef; --ml-text-dim:#a7aeab;
+  --ml-line:rgba(242,147,13,.18);
+  --ml-divider:rgba(98,99,101,.32);
+  --ml-text:#eef2ef; --ml-text-dim:#9aa19e; --ml-text-muted:#626365;
 }
 body{
   background:radial-gradient(120% 90% at 15% -10%, #1c3c2c 0%, #141c1c 55%, #101616 100%);
@@ -30,24 +34,26 @@ body{
 .ml-display{font-weight:800;letter-spacing:-.02em}
 .ml-eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.7rem;font-weight:700;color:var(--ml-orange)}
 .ml-dim{color:var(--ml-text-dim)}
+.ml-muted{color:var(--ml-text-muted)}
 .ml-card{background:linear-gradient(180deg,rgba(28,60,44,.55),rgba(20,28,28,.85));border:1px solid var(--ml-line);border-radius:18px}
-.ml-card-plain{background:var(--ml-surface);border:1px solid rgba(255,255,255,.07);border-radius:16px}
+.ml-card-plain{background:var(--ml-surface);border:1px solid var(--ml-divider);border-radius:16px}
 .ml-btn-primary{background:var(--ml-orange);border:none;color:var(--ml-ink);font-weight:700;border-radius:12px}
 .ml-btn-primary:hover,.ml-btn-primary:focus{background:var(--ml-orange-soft);color:var(--ml-ink)}
-.ml-btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--ml-text);font-weight:600;border-radius:12px}
-.ml-btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--ml-text)}
-.ml-input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ml-text);border-radius:12px;padding:.7rem .9rem}
-.ml-input::placeholder{color:#7d8582}
+.ml-btn-ghost{background:transparent;border:1px solid var(--ml-divider);color:var(--ml-text);font-weight:600;border-radius:12px}
+.ml-btn-ghost:hover{background:rgba(98,99,101,.22);color:var(--ml-text)}
+.ml-input{background:rgba(255,255,255,.05);border:1px solid var(--ml-divider);color:var(--ml-text);border-radius:12px;padding:.7rem .9rem}
+.ml-input::placeholder{color:var(--ml-text-muted)}
 .ml-input:focus{background:rgba(255,255,255,.07);color:var(--ml-text);border-color:var(--ml-orange);box-shadow:0 0 0 3px rgba(242,147,13,.2)}
 .ml-chip{border:1px solid var(--ml-line);background:rgba(242,147,13,.08);color:var(--ml-text);border-radius:999px;padding:.35rem .8rem;font-size:.8rem;font-weight:600}
 .ml-chip.active{background:var(--ml-orange);color:var(--ml-ink);border-color:var(--ml-orange)}
-.ml-nav{background:rgba(20,28,28,.9);border-bottom:1px solid var(--ml-line);backdrop-filter:blur(10px)}
-.ml-tabbar{position:sticky;bottom:0;z-index:20;background:rgba(20,28,28,.95);border-top:1px solid var(--ml-line);backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)}
+.ml-nav{background:rgba(20,28,28,.9);border-bottom:1px solid var(--ml-divider);backdrop-filter:blur(10px)}
+.ml-tabbar{position:sticky;bottom:0;z-index:20;background:rgba(20,28,28,.95);border-top:1px solid var(--ml-divider);backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)}
 .ml-tab{color:var(--ml-text-dim);font-size:.7rem;font-weight:600;background:none;border:0}
 .ml-tab i{display:block;font-size:1.15rem}
 .ml-tab.active{color:var(--ml-orange)}
-.ml-row{border-bottom:1px solid rgba(255,255,255,.06)}
+.ml-row{border-bottom:1px solid var(--ml-divider)}
 .ml-row:last-child{border-bottom:0}
+.ml-divider-line{border-top:1px solid var(--ml-divider)}
 .ml-pill-up{color:#6ee7a8}
 .ml-pill-down{color:#ff8f7a}
 .ml-logo-mark{width:38px;height:38px;border-radius:11px;flex:0 0 auto;background:linear-gradient(140deg,var(--ml-orange),#b8620a);color:var(--ml-ink);font-weight:800;display:flex;align-items:center;justify-content:center}
@@ -56,8 +62,8 @@ body{
 .form-range{--bs-form-range-thumb-bg:var(--ml-orange)}
 .form-range::-webkit-slider-thumb{background:var(--ml-orange)}
 .form-range::-moz-range-thumb{background:var(--ml-orange)}
-.form-range::-webkit-slider-runnable-track{background:rgba(255,255,255,.18);height:.4rem;border-radius:999px}
-.form-range::-moz-range-track{background:rgba(255,255,255,.18);height:.4rem;border-radius:999px}
+.form-range::-webkit-slider-runnable-track{background:rgba(98,99,101,.45);height:.4rem;border-radius:999px}
+.form-range::-moz-range-track{background:rgba(98,99,101,.45);height:.4rem;border-radius:999px}
 </style>
 </head>
 <body>
@@ -130,7 +136,7 @@ function lineChart(history,forecast){
     .concat(forecast.map(function(f,i){return x(history.length+i).toFixed(1)+","+y(f.low).toFixed(1)}).reverse()).join(" ");
   var grid = [0.25,0.5,0.75].map(function(g){
     var yy = pad+g*(H-pad*2);
-    return '<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(255,255,255,0.08)"/>';
+    return '<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(98,99,101,0.35)"/>';
   }).join("");
   return '<svg viewBox="0 0 '+W+' '+H+'" class="w-100" role="img" aria-label="Precio histórico y proyección">'+
     grid+
@@ -171,7 +177,7 @@ function authView(){
         (!isLogin?'<div class="form-check mb-3"><input class="form-check-input" type="checkbox" checked id="tos" /><label class="form-check-label small ml-dim" for="tos">Acepto los términos y el aviso de privacidad</label></div>':'')+
         '<button type="submit" class="btn ml-btn-primary w-100 py-2">'+(isLogin?"Entrar al panel":"Crear mi cuenta")+'</button>'+
       '</form>'+
-      '<div class="d-flex align-items-center gap-2 my-3 ml-dim small"><span class="flex-fill border-top" style="opacity:.2"></span>o continúa con<span class="flex-fill border-top" style="opacity:.2"></span></div>'+
+      '<div class="d-flex align-items-center gap-2 my-3 ml-dim small"><span class="flex-fill" style="border-top:1px solid var(--ml-divider)"></span>o continúa con<span class="flex-fill" style="border-top:1px solid var(--ml-divider)"></span></div>'+
       '<button class="btn ml-btn-ghost w-100 py-2 mb-2" data-action="enter"><i class="bi bi-google me-2"></i> Google</button>'+
       '<button class="btn ml-btn-ghost w-100 py-2" data-action="enter"><i class="bi bi-envelope me-2"></i> Enlace por correo</button>'+
       '<p class="ml-dim small text-center mb-0 mt-3">Prototipo demostrativo · datos de ejemplo</p>'+
