@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Sales Forcaster — Proyección de costos | Molten Logistics</title>
+<meta name="description" content="Prototipo de Sales Forcaster: fija productos, revisa precios históricos y proyecta costos a corto, mediano y largo plazo." />
+<meta name="author" content="Molten Logistics" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Sales Forcaster by Molten Logistics" />
+<meta property="og:description" content="Proyección de costos de productos para vendedores grandes, medianos y chicos." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&display=swap" />
+<style>
+:root{
+  --ml-orange:#f2930d; --ml-orange-soft:#ffb547; --ml-gray:#626365;
+  --ml-green:#1c3c2c; --ml-ink:#141c1c; --ml-surface:#1b2422;
+  --ml-line:rgba(242,147,13,.18); --ml-text:#eef2ef; --ml-text-dim:#a7aeab;
+}
+body{
+  background:radial-gradient(120% 90% at 15% -10%, #1c3c2c 0%, #141c1c 55%, #101616 100%);
+  color:var(--ml-text); font-family:"Barlow",system-ui,-apple-system,"Segoe UI",sans-serif;
+  min-height:100vh; -webkit-font-smoothing:antialiased; padding-bottom:env(safe-area-inset-bottom);
+}
+.ml-display{font-weight:800;letter-spacing:-.02em}
+.ml-eyebrow{text-transform:uppercase;letter-spacing:.18em;font-size:.7rem;font-weight:700;color:var(--ml-orange)}
+.ml-dim{color:var(--ml-text-dim)}
+.ml-card{background:linear-gradient(180deg,rgba(28,60,44,.55),rgba(20,28,28,.85));border:1px solid var(--ml-line);border-radius:18px}
+.ml-card-plain{background:var(--ml-surface);border:1px solid rgba(255,255,255,.07);border-radius:16px}
+.ml-btn-primary{background:var(--ml-orange);border:none;color:var(--ml-ink);font-weight:700;border-radius:12px}
+.ml-btn-primary:hover,.ml-btn-primary:focus{background:var(--ml-orange-soft);color:var(--ml-ink)}
+.ml-btn-ghost{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--ml-text);font-weight:600;border-radius:12px}
+.ml-btn-ghost:hover{background:rgba(255,255,255,.06);color:var(--ml-text)}
+.ml-input{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--ml-text);border-radius:12px;padding:.7rem .9rem}
+.ml-input::placeholder{color:#7d8582}
+.ml-input:focus{background:rgba(255,255,255,.07);color:var(--ml-text);border-color:var(--ml-orange);box-shadow:0 0 0 3px rgba(242,147,13,.2)}
+.ml-chip{border:1px solid var(--ml-line);background:rgba(242,147,13,.08);color:var(--ml-text);border-radius:999px;padding:.35rem .8rem;font-size:.8rem;font-weight:600}
+.ml-chip.active{background:var(--ml-orange);color:var(--ml-ink);border-color:var(--ml-orange)}
+.ml-nav{background:rgba(20,28,28,.9);border-bottom:1px solid var(--ml-line);backdrop-filter:blur(10px)}
+.ml-tabbar{position:sticky;bottom:0;z-index:20;background:rgba(20,28,28,.95);border-top:1px solid var(--ml-line);backdrop-filter:blur(10px);padding-bottom:env(safe-area-inset-bottom)}
+.ml-tab{color:var(--ml-text-dim);font-size:.7rem;font-weight:600;background:none;border:0}
+.ml-tab i{display:block;font-size:1.15rem}
+.ml-tab.active{color:var(--ml-orange)}
+.ml-row{border-bottom:1px solid rgba(255,255,255,.06)}
+.ml-row:last-child{border-bottom:0}
+.ml-pill-up{color:#6ee7a8}
+.ml-pill-down{color:#ff8f7a}
+.ml-logo-mark{width:38px;height:38px;border-radius:11px;flex:0 0 auto;background:linear-gradient(140deg,var(--ml-orange),#b8620a);color:var(--ml-ink);font-weight:800;display:flex;align-items:center;justify-content:center}
+.ml-table{--bs-table-bg:transparent;--bs-table-color:var(--ml-text);color:var(--ml-text)}
+.ml-table > :not(caption) > * > *{background:transparent;color:inherit}
+.form-range{--bs-form-range-thumb-bg:var(--ml-orange)}
+.form-range::-webkit-slider-thumb{background:var(--ml-orange)}
+.form-range::-moz-range-thumb{background:var(--ml-orange)}
+.form-range::-webkit-slider-runnable-track{background:rgba(255,255,255,.18);height:.4rem;border-radius:999px}
+.form-range::-moz-range-track{background:rgba(255,255,255,.18);height:.4rem;border-radius:999px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ================= Datos tontos ================= */
+var PRODUCTS = [
+  {id:"p1",name:"Aguacate Hass",sku:"AGH-4KG",category:"Agrícola",unit:"caja 4 kg",price:412.5,change:6.4,supplier:"Uruapan, MICH",history:[318,330,352,341,366,380,372,391,398,404,407,412]},
+  {id:"p2",name:"Resina PET grado botella",sku:"PET-25KG",category:"Insumos",unit:"saco 25 kg",price:1180,change:-2.1,supplier:"Altamira, TAMS",history:[1290,1275,1262,1240,1233,1210,1224,1198,1205,1192,1186,1180]},
+  {id:"p3",name:"Café verde arábica",sku:"CAF-60KG",category:"Agrícola",unit:"saco 60 kg",price:7450,change:11.2,supplier:"Coatepec, VER",history:[5100,5320,5480,5610,5890,6150,6420,6680,6910,7080,7290,7450]},
+  {id:"p4",name:"Cartón corrugado doble",sku:"CRR-1000",category:"Empaque",unit:"millar",price:8620,change:1.8,supplier:"Monterrey, NL",history:[8180,8210,8250,8290,8330,8360,8400,8455,8490,8530,8580,8620]},
+  {id:"p5",name:"Flete seco 53' nacional",sku:"FLT-53N",category:"Logística",unit:"viaje",price:32400,change:4.9,supplier:"Molten Logistics",history:[28900,29200,29800,30100,30400,30050,30900,31200,31600,31900,32100,32400]},
+  {id:"p6",name:"Aceite de canola",sku:"ACN-20L",category:"Insumos",unit:"cubeta 20 L",price:968,change:-1.2,supplier:"Guadalajara, JAL",history:[1010,1005,998,1002,990,985,979,982,974,971,970,968]}
+];
+var MONTHS = ["Sep","Oct","Nov","Dic","Ene","Feb","Mar","Abr","May","Jun","Jul","Ago"];
+var HORIZONS = {
+  corto:{label:"Corto plazo",months:3,drift:1.0},
+  mediano:{label:"Mediano plazo",months:6,drift:1.15},
+  largo:{label:"Largo plazo",months:12,drift:1.35}
+};
+
+/* ================= Estado ================= */
+var state = {
+  authed:false, mode:"login", tab:"buscar", query:"",
+  pinned:["p1","p3"], selectedId:"p1", horizon:"corto", units:320, margin:22,
+  saved:[
+    {id:"s1",productId:"p1",horizon:"corto",units:320,margin:22,updated:"Hoy, 11:40"},
+    {id:"s2",productId:"p3",horizon:"largo",units:45,margin:31,updated:"Ayer, 18:02"},
+    {id:"s3",productId:"p5",horizon:"mediano",units:12,margin:15,updated:"27 Ago"},
+    {id:"s4",productId:"p4",horizon:"corto",units:8,margin:18,updated:"24 Ago"}
+  ]
+};
+
+/* ================= Utilidades ================= */
+function byId(id){ return PRODUCTS.filter(function(p){return p.id===id})[0]; }
+function money(n){ return n.toLocaleString("es-MX",{style:"currency",currency:"MXN",maximumFractionDigits:0}); }
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];}); }
+function project(p,horizon){
+  var h = HORIZONS[horizon], hist = p.history;
+  var last = hist[hist.length-1], first = hist[0];
+  var monthly = (last-first)/(hist.length-1), out = [];
+  for(var i=1;i<=h.months;i++){
+    var base = last + monthly*i*h.drift;
+    var spread = base*(0.025+0.011*i);
+    out.push({label:MONTHS[(11+i)%12],base:Math.round(base),low:Math.round(base-spread),high:Math.round(base+spread)});
+  }
+  return out;
+}
+function sparkline(data,up){
+  var W=90,H=28,min=Math.min.apply(null,data),max=Math.max.apply(null,data);
+  var pts = data.map(function(v,i){
+    var x=(i*W)/(data.length-1), y=H-((v-min)/((max-min)||1))*H;
+    return x.toFixed(1)+","+y.toFixed(1);
+  }).join(" ");
+  return '<svg viewBox="0 0 '+W+' '+H+'" width="'+W+'" height="'+H+'" aria-hidden="true">'+
+    '<polyline points="'+pts+'" fill="none" stroke="'+(up?"#6ee7a8":"#ff8f7a")+'" stroke-width="2"/></svg>';
+}
+function lineChart(history,forecast){
+  var W=640,H=220,pad=10;
+  var all = history.concat(forecast.map(function(f){return f.high}), forecast.map(function(f){return f.low}));
+  var min=Math.min.apply(null,all)*0.97, max=Math.max.apply(null,all)*1.03;
+  var total = history.length + forecast.length;
+  function x(i){ return pad + (i*(W-pad*2))/(total-1); }
+  function y(v){ return H - pad - ((v-min)/(max-min))*(H-pad*2); }
+  var histPts = history.map(function(v,i){return x(i).toFixed(1)+","+y(v).toFixed(1)}).join(" ");
+  var fc = [x(history.length-1).toFixed(1)+","+y(history[history.length-1]).toFixed(1)]
+    .concat(forecast.map(function(f,i){return x(history.length+i).toFixed(1)+","+y(f.base).toFixed(1)})).join(" ");
+  var band = forecast.map(function(f,i){return x(history.length+i).toFixed(1)+","+y(f.high).toFixed(1)})
+    .concat(forecast.map(function(f,i){return x(history.length+i).toFixed(1)+","+y(f.low).toFixed(1)}).reverse()).join(" ");
+  var grid = [0.25,0.5,0.75].map(function(g){
+    var yy = pad+g*(H-pad*2);
+    return '<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(255,255,255,0.08)"/>';
+  }).join("");
+  return '<svg viewBox="0 0 '+W+' '+H+'" class="w-100" role="img" aria-label="Precio histórico y proyección">'+
+    grid+
+    '<polygon points="'+band+'" fill="rgba(242,147,13,0.16)"/>'+
+    '<polyline points="'+histPts+'" fill="none" stroke="#eef2ef" stroke-width="2.5"/>'+
+    '<polyline points="'+fc+'" fill="none" stroke="#f2930d" stroke-width="2.5" stroke-dasharray="6 5"/>'+
+    history.map(function(v,i){return '<circle cx="'+x(i).toFixed(1)+'" cy="'+y(v).toFixed(1)+'" r="2.5" fill="#eef2ef"/>'}).join("")+
+    forecast.map(function(f,i){return '<circle cx="'+x(history.length+i).toFixed(1)+'" cy="'+y(f.base).toFixed(1)+'" r="3" fill="#f2930d"/>'}).join("")+
+    '</svg>';
+}
+function brand(compact){
+  return '<div class="d-flex align-items-center gap-2"><span class="ml-logo-mark">SF</span>'+
+    '<span class="lh-1"><span class="d-block ml-display" style="font-size:'+(compact?"0.98rem":"1.15rem")+'">Sales Forcaster</span>'+
+    '<span class="d-block ml-dim" style="font-size:.7rem">by Molten Logistics</span></span></div>';
+}
+
+/* ================= Vistas ================= */
+function authView(){
+  var isLogin = state.mode === "login";
+  var feats = [["bi-pin-angle","Productos fijados"],["bi-graph-up-arrow","Histórico 12 meses"],["bi-sliders","Escenarios de margen"]];
+  return '<main class="container py-4 py-lg-5"><div class="row justify-content-center align-items-center g-4 g-lg-5">'+
+    '<div class="col-12 col-lg-6">'+brand(false)+
+      '<p class="ml-eyebrow mt-4 mb-2">Proyección de costos</p>'+
+      '<h1 class="ml-display display-5 mb-3">Sabe cuánto te va a costar <span style="color:var(--ml-orange)">antes de comprar</span>.</h1>'+
+      '<p class="ml-dim mb-4" style="max-width:46ch">Fija tus productos clave, revisa su precio histórico y proyecta escenarios a corto, mediano y largo plazo. Para vendedores chicos, medianos y grandes.</p>'+
+      '<div class="row g-3">'+feats.map(function(f){
+        return '<div class="col-12 col-sm-4"><div class="ml-card-plain p-3 h-100"><i class="bi '+f[0]+' fs-5" style="color:var(--ml-orange)"></i><div class="small mt-2 fw-semibold">'+f[1]+'</div></div></div>';
+      }).join("")+'</div></div>'+
+    '<div class="col-12 col-md-9 col-lg-5"><div class="ml-card p-4">'+
+      '<div class="d-flex gap-2 mb-4">'+
+        '<button class="ml-chip flex-fill '+(isLogin?"active":"")+'" data-action="mode" data-value="login">Iniciar sesión</button>'+
+        '<button class="ml-chip flex-fill '+(!isLogin?"active":"")+'" data-action="mode" data-value="register">Crear cuenta</button>'+
+      '</div>'+
+      '<form data-action="enter-form">'+
+        (!isLogin?'<label class="form-label small fw-semibold">Nombre del negocio</label><input class="form-control ml-input mb-3" placeholder="Distribuidora del Norte" />':'')+
+        '<label class="form-label small fw-semibold">Correo</label><input type="email" class="form-control ml-input mb-3" placeholder="tu@negocio.com" value="demo@moltenlogistics.com" />'+
+        '<label class="form-label small fw-semibold">Contraseña</label><input type="password" class="form-control ml-input mb-3" value="demo1234" />'+
+        (!isLogin?'<div class="form-check mb-3"><input class="form-check-input" type="checkbox" checked id="tos" /><label class="form-check-label small ml-dim" for="tos">Acepto los términos y el aviso de privacidad</label></div>':'')+
+        '<button type="submit" class="btn ml-btn-primary w-100 py-2">'+(isLogin?"Entrar al panel":"Crear mi cuenta")+'</button>'+
+      '</form>'+
+      '<div class="d-flex align-items-center gap-2 my-3 ml-dim small"><span class="flex-fill border-top" style="opacity:.2"></span>o continúa con<span class="flex-fill border-top" style="opacity:.2"></span></div>'+
+      '<button class="btn ml-btn-ghost w-100 py-2 mb-2" data-action="enter"><i class="bi bi-google me-2"></i> Google</button>'+
+      '<button class="btn ml-btn-ghost w-100 py-2" data-action="enter"><i class="bi bi-envelope me-2"></i> Enlace por correo</button>'+
+      '<p class="ml-dim small text-center mb-0 mt-3">Prototipo demostrativo · datos de ejemplo</p>'+
+    '</div></div></div></main>';
+}
+
+function searchView(){
+  var q = state.query.trim().toLowerCase();
+  var results = !q ? PRODUCTS : PRODUCTS.filter(function(p){
+    return [p.name,p.sku,p.category,p.supplier].join(" ").toLowerCase().indexOf(q) !== -1;
+  });
+  var cats = ["Agrícola","Insumos","Empaque","Logística"];
+  var html = '<p class="ml-eyebrow mb-1">Búsqueda libre</p>'+
+    '<h1 class="ml-display h3 mb-3">¿Qué producto quieres proyectar?</h1>'+
+    '<div class="ml-card p-3 mb-4"><div class="input-group">'+
+      '<span class="input-group-text bg-transparent border-0 ml-dim"><i class="bi bi-search"></i></span>'+
+      '<input id="search-input" class="form-control ml-input border-0" placeholder="Aguacate, resina PET, flete 53\', SKU…" value="'+esc(state.query)+'" />'+
+    '</div><div class="d-flex flex-wrap gap-2 mt-3">'+
+      cats.map(function(c){return '<button class="ml-chip" data-action="query" data-value="'+c+'">'+c+'</button>'}).join("")+
+      (state.query?'<button class="ml-chip" data-action="query" data-value=""><i class="bi bi-x-lg me-1"></i>Limpiar</button>':'')+
+    '</div></div>';
+
+  var pins = PRODUCTS.filter(function(p){return state.pinned.indexOf(p.id)!==-1});
+  if(pins.length){
+    html += '<h2 class="h6 ml-dim text-uppercase mb-2" style="letter-spacing:.12em">Productos fijados</h2><div class="row g-3 mb-4">'+
+      pins.map(function(p){
+        return '<div class="col-12 col-md-6 col-xl-4"><div class="ml-card p-3 h-100">'+
+          '<div class="d-flex justify-content-between align-items-start"><div><div class="fw-bold">'+esc(p.name)+'</div>'+
+          '<div class="small ml-dim">'+esc(p.sku)+' · '+esc(p.unit)+'</div></div>'+
+          '<button class="btn btn-sm ml-btn-ghost" data-action="pin" data-value="'+p.id+'" aria-label="Quitar de fijados"><i class="bi bi-pin-fill" style="color:var(--ml-orange)"></i></button></div>'+
+          '<div class="d-flex justify-content-between align-items-end mt-3"><div><div class="ml-display fs-4">'+money(p.price)+'</div>'+
+          '<div class="small '+(p.change>=0?"ml-pill-up":"ml-pill-down")+'"><i class="bi '+(p.change>=0?"bi-arrow-up-right":"bi-arrow-down-right")+'"></i> '+Math.abs(p.change).toFixed(1)+'% 12m</div></div>'+
+          sparkline(p.history,p.change>=0)+'</div>'+
+          '<button class="btn ml-btn-primary w-100 mt-3" data-action="open" data-value="'+p.id+'">Proyectar</button>'+
+        '</div></div>';
+      }).join("")+'</div>';
+  }
+
+  html += '<h2 class="h6 ml-dim text-uppercase mb-2" style="letter-spacing:.12em">'+
+    (state.query?"Resultados ("+results.length+")":"Catálogo de ejemplo")+'</h2><div class="ml-card px-3">'+
+    results.map(function(p){
+      var pinned = state.pinned.indexOf(p.id)!==-1;
+      return '<div class="ml-row d-flex align-items-center gap-3 py-3 flex-wrap">'+
+        '<button class="btn btn-sm ml-btn-ghost" data-action="pin" data-value="'+p.id+'" aria-label="Fijar producto"><i class="bi '+(pinned?"bi-pin-fill":"bi-pin-angle")+'" '+(pinned?'style="color:var(--ml-orange)"':'')+'></i></button>'+
+        '<div class="flex-grow-1" style="min-width:10rem"><div class="fw-semibold">'+esc(p.name)+'</div><div class="small ml-dim">'+esc(p.category)+' · '+esc(p.supplier)+'</div></div>'+
+        sparkline(p.history,p.change>=0)+
+        '<div class="text-end" style="min-width:6.5rem"><div class="fw-bold">'+money(p.price)+'</div>'+
+        '<div class="small '+(p.change>=0?"ml-pill-up":"ml-pill-down")+'">'+(p.change>=0?"+":"")+p.change.toFixed(1)+'%</div></div>'+
+        '<button class="btn btn-sm ml-btn-primary" data-action="open" data-value="'+p.id+'">Proyectar</button>'+
+      '</div>';
+    }).join("")+
+    (results.length?'':'<p class="ml-dim py-4 mb-0 text-center">Sin resultados para “'+esc(state.query)+'”.</p>')+
+    '</div>';
+  return html;
+}
+
+function forecastView(){
+  var p = byId(state.selectedId), fc = project(p,state.horizon);
+  var last = p.history[p.history.length-1], end = fc[fc.length-1];
+  var deltaPct = ((end.base-last)/last)*100;
+  var unitCost = end.base, totalCost = unitCost*state.units, salePrice = unitCost*(1+state.margin/100);
+  var pinned = state.pinned.indexOf(p.id)!==-1;
+  var rows = [
+    ["Costo unitario proyectado",money(unitCost)],
+    ["Costo total del lote",money(totalCost)],
+    ["Precio de venta sugerido",money(salePrice)],
+    ["Utilidad estimada",money(salePrice*state.units-totalCost)]
+  ];
+  return '<button class="btn btn-sm ml-btn-ghost mb-3" data-action="tab" data-value="buscar"><i class="bi bi-arrow-left me-1"></i> Buscar otro producto</button>'+
+  '<div class="row g-4"><div class="col-12 col-lg-8"><div class="ml-card p-3 p-md-4">'+
+    '<div class="d-flex justify-content-between align-items-start flex-wrap gap-2"><div>'+
+      '<p class="ml-eyebrow mb-1">'+esc(p.category)+'</p><h1 class="ml-display h4 mb-1">'+esc(p.name)+'</h1>'+
+      '<div class="small ml-dim">'+esc(p.sku)+' · '+esc(p.unit)+' · '+esc(p.supplier)+'</div></div>'+
+      '<button class="btn ml-btn-ghost btn-sm" data-action="pin" data-value="'+p.id+'"><i class="bi '+(pinned?"bi-pin-fill":"bi-pin-angle")+' me-1"></i>'+(pinned?"Fijado":"Fijar")+'</button></div>'+
+    '<div class="d-flex flex-wrap gap-2 mt-3">'+Object.keys(HORIZONS).map(function(h){
+      return '<button class="ml-chip '+(state.horizon===h?"active":"")+'" data-action="horizon" data-value="'+h+'">'+HORIZONS[h].label+' · '+HORIZONS[h].months+'m</button>';
+    }).join("")+'</div>'+
+    '<div class="mt-3">'+lineChart(p.history,fc)+
+      '<div class="d-flex gap-3 small ml-dim mt-2 flex-wrap">'+
+      '<span><span class="d-inline-block me-1" style="width:14px;height:2px;background:#eef2ef;vertical-align:middle"></span>Histórico 12 m</span>'+
+      '<span><span class="d-inline-block me-1" style="width:14px;height:2px;background:var(--ml-orange);vertical-align:middle"></span>Proyección</span>'+
+      '<span><span class="d-inline-block me-1" style="width:14px;height:8px;background:rgba(242,147,13,.25);vertical-align:middle"></span>Rango optimista / pesimista</span>'+
+      '</div></div>'+
+    '<div class="table-responsive mt-4"><table class="table table-borderless align-middle mb-0 ml-table">'+
+      '<thead class="small ml-dim"><tr><th>Mes</th><th class="text-end">Pesimista</th><th class="text-end">Esperado</th><th class="text-end">Optimista</th></tr></thead><tbody>'+
+      fc.map(function(f){return '<tr class="ml-row"><td class="fw-semibold">'+f.label+'</td><td class="text-end ml-pill-down">'+money(f.high)+'</td><td class="text-end fw-bold">'+money(f.base)+'</td><td class="text-end ml-pill-up">'+money(f.low)+'</td></tr>'}).join("")+
+      '</tbody></table></div>'+
+  '</div></div>'+
+  '<div class="col-12 col-lg-4">'+
+    '<div class="ml-card p-3 p-md-4 mb-4"><p class="ml-eyebrow mb-2">Escenario</p>'+
+      '<label class="form-label small fw-semibold d-flex justify-content-between"><span>Volumen ('+esc(p.unit)+')</span><span style="color:var(--ml-orange)">'+state.units+'</span></label>'+
+      '<input type="range" class="form-range mb-3" min="1" max="1000" value="'+state.units+'" data-action="units" />'+
+      '<label class="form-label small fw-semibold d-flex justify-content-between"><span>Margen objetivo</span><span style="color:var(--ml-orange)">'+state.margin+'%</span></label>'+
+      '<input type="range" class="form-range" min="0" max="60" value="'+state.margin+'" data-action="margin" />'+
+    '</div>'+
+    '<div class="ml-card p-3 p-md-4 mb-4"><p class="ml-eyebrow mb-3">Resultado a '+HORIZONS[state.horizon].months+' meses</p>'+
+      rows.map(function(r){return '<div class="ml-row d-flex justify-content-between py-2"><span class="small ml-dim">'+r[0]+'</span><span class="fw-bold">'+r[1]+'</span></div>'}).join("")+
+      '<div class="d-flex justify-content-between py-2"><span class="small ml-dim">Variación vs. hoy</span>'+
+      '<span class="fw-bold '+(deltaPct>=0?"ml-pill-down":"ml-pill-up")+'">'+(deltaPct>=0?"+":"")+deltaPct.toFixed(1)+'%</span></div>'+
+      '<button class="btn ml-btn-primary w-100 mt-3" data-action="save"><i class="bi bi-bookmark-plus me-1"></i> Guardar proyección</button>'+
+    '</div>'+
+    '<div class="ml-card-plain p-3 small ml-dim"><i class="bi bi-info-circle me-1" style="color:var(--ml-orange)"></i> Modelo demostrativo: tendencia lineal de los últimos 12 meses con deriva por horizonte. Los datos son de ejemplo.</div>'+
+  '</div></div>';
+}
+
+function savedView(){
+  var html = '<p class="ml-eyebrow mb-1">Mi biblioteca</p><h1 class="ml-display h3 mb-3">Proyecciones guardadas</h1><div class="row g-3">';
+  if(!state.saved.length){
+    html += '<div class="col-12"><div class="ml-card p-5 text-center ml-dim">Aún no guardas proyecciones.'+
+      '<div class="mt-3"><button class="btn ml-btn-primary" data-action="tab" data-value="buscar">Buscar un producto</button></div></div></div>';
+  }
+  html += state.saved.map(function(s){
+    var p = byId(s.productId), f = project(p,s.horizon), e = f[f.length-1];
+    return '<div class="col-12 col-md-6 col-xl-4"><div class="ml-card p-3 h-100 d-flex flex-column">'+
+      '<div class="d-flex justify-content-between align-items-start"><div><div class="fw-bold">'+esc(p.name)+'</div>'+
+      '<div class="small ml-dim">'+HORIZONS[s.horizon].label+' · '+s.units+' '+esc(p.unit)+'</div></div>'+
+      '<span class="ml-chip">'+s.margin+'% margen</span></div>'+
+      '<div class="my-3">'+sparkline(p.history.concat(f.map(function(x){return x.base})), e.base>=p.price)+'</div>'+
+      '<div class="ml-row d-flex justify-content-between py-2"><span class="small ml-dim">Costo unitario proyectado</span><span class="fw-bold">'+money(e.base)+'</span></div>'+
+      '<div class="d-flex justify-content-between py-2"><span class="small ml-dim">Actualizado</span><span class="small">'+esc(s.updated)+'</span></div>'+
+      '<div class="d-flex gap-2 mt-auto pt-2">'+
+        '<button class="btn ml-btn-primary flex-fill btn-sm" data-action="open-saved" data-value="'+s.id+'">Abrir</button>'+
+        '<button class="btn ml-btn-ghost btn-sm" data-action="delete-saved" data-value="'+s.id+'" aria-label="Eliminar proyección"><i class="bi bi-trash3"></i></button>'+
+      '</div></div></div>';
+  }).join("");
+  return html + '</div>';
+}
+
+function accountView(){
+  var rows = [["Productos fijados",String(state.pinned.length)],["Proyecciones guardadas",String(state.saved.length)],["Moneda","MXN"],["Zona","México · Centro"]];
+  return '<p class="ml-eyebrow mb-1">Cuenta</p><h1 class="ml-display h3 mb-3">Distribuidora Demo</h1>'+
+  '<div class="row g-4"><div class="col-12 col-lg-6"><div class="ml-card p-4">'+
+    '<div class="d-flex align-items-center gap-3"><span class="ml-logo-mark" style="width:52px;height:52px">DD</span>'+
+    '<div><div class="fw-bold">demo@moltenlogistics.com</div><div class="small ml-dim">Conectado con Google · plan Vendedor Pro</div></div></div>'+
+    rows.map(function(r){return '<div class="ml-row d-flex justify-content-between py-2 mt-1"><span class="small ml-dim">'+r[0]+'</span><span class="fw-semibold">'+r[1]+'</span></div>'}).join("")+
+    '<button class="btn ml-btn-ghost w-100 mt-3" data-action="logout">Cerrar sesión</button>'+
+  '</div></div>'+
+  '<div class="col-12 col-lg-6"><div class="ml-card-plain p-4 h-100"><p class="ml-eyebrow mb-2">Prototipo</p>'+
+    '<p class="ml-dim mb-0">Esta versión no se conecta a internet ni a una base de datos: usa datos de ejemplo para validar flujo y diseño en iPhone, iPad y laptop.</p></div></div></div>';
+}
+
+var TABS = [["buscar","Buscar","bi-search"],["proyeccion","Proyección","bi-graph-up-arrow"],["guardadas","Guardadas","bi-bookmark"],["cuenta","Cuenta","bi-person"]];
+
+function render(){
+  var app = document.getElementById("app");
+  if(!state.authed){ app.innerHTML = authView(); return; }
+  var body = state.tab==="buscar" ? searchView()
+    : state.tab==="proyeccion" ? forecastView()
+    : state.tab==="guardadas" ? savedView() : accountView();
+
+  app.innerHTML = '<div class="d-flex flex-column min-vh-100">'+
+    '<header class="ml-nav sticky-top"><div class="container d-flex align-items-center justify-content-between py-2">'+
+      brand(true)+
+      '<div class="d-none d-md-flex align-items-center gap-1">'+TABS.map(function(t){
+        return '<button class="ml-chip '+(state.tab===t[0]?"active":"")+'" data-action="tab" data-value="'+t[0]+'"><i class="bi '+t[2]+' me-1"></i>'+t[1]+'</button>';
+      }).join("")+'</div>'+
+      '<button class="btn ml-btn-ghost btn-sm d-none d-md-inline-flex" data-action="logout">Salir</button>'+
+      '<span class="ml-chip d-md-none"><i class="bi bi-person-circle me-1"></i> Demo</span>'+
+    '</div></header>'+
+    '<main class="container py-4 flex-grow-1">'+body+'</main>'+
+    '<nav class="ml-tabbar d-md-none"><div class="d-flex justify-content-around py-2">'+
+      TABS.map(function(t){
+        return '<button class="ml-tab '+(state.tab===t[0]?"active":"")+'" data-action="tab" data-value="'+t[0]+'"><i class="bi '+t[2]+'"></i>'+t[1]+'</button>';
+      }).join("")+
+    '</div></nav></div>';
+}
+
+/* ================= Eventos (delegación) ================= */
+document.addEventListener("click", function(ev){
+  var el = ev.target.closest("[data-action]");
+  if(!el) return;
+  var action = el.getAttribute("data-action"), value = el.getAttribute("data-value");
+  if(el.tagName === "INPUT" || el.tagName === "FORM") return;
+
+  if(action==="mode"){ state.mode = value; }
+  else if(action==="enter"){ state.authed = true; state.tab = "buscar"; }
+  else if(action==="logout"){ state.authed = false; }
+  else if(action==="tab"){ state.tab = value; }
+  else if(action==="query"){ state.query = value; }
+  else if(action==="pin"){
+    var i = state.pinned.indexOf(value);
+    if(i===-1) state.pinned.push(value); else state.pinned.splice(i,1);
+  }
+  else if(action==="open"){ state.selectedId = value; state.tab = "proyeccion"; }
+  else if(action==="horizon"){ state.horizon = value; }
+  else if(action==="save"){
+    state.saved.unshift({id:"s"+Date.now(),productId:state.selectedId,horizon:state.horizon,units:state.units,margin:state.margin,updated:"Ahora"});
+    state.tab = "guardadas";
+  }
+  else if(action==="open-saved"){
+    var s = state.saved.filter(function(x){return x.id===value})[0];
+    if(s){ state.selectedId = s.productId; state.horizon = s.horizon; state.units = s.units; state.margin = s.margin; state.tab = "proyeccion"; }
+  }
+  else if(action==="delete-saved"){ state.saved = state.saved.filter(function(x){return x.id!==value}); }
+  else return;
+  render();
+});
+
+document.addEventListener("submit", function(ev){
+  var form = ev.target.closest('[data-action="enter-form"]');
+  if(!form) return;
+  ev.preventDefault();
+  state.authed = true; state.tab = "buscar";
+  render();
+});
+
+document.addEventListener("input", function(ev){
+  var el = ev.target;
+  if(el.id === "search-input"){
+    state.query = el.value;
+    var pos = el.selectionStart;
+    render();
+    var next = document.getElementById("search-input");
+    if(next){ next.focus(); try{ next.setSelectionRange(pos,pos); }catch(e){} }
+  } else if(el.getAttribute && el.getAttribute("data-action")==="units"){
+    state.units = Number(el.value); render();
+  } else if(el.getAttribute && el.getAttribute("data-action")==="margin"){
+    state.margin = Number(el.value); render();
+  }
+});
+
+render();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
