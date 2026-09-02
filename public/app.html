@@ -136,7 +136,7 @@ function lineChart(history,forecast){
     .concat(forecast.map(function(f,i){return x(history.length+i).toFixed(1)+","+y(f.low).toFixed(1)}).reverse()).join(" ");
   var grid = [0.25,0.5,0.75].map(function(g){
     var yy = pad+g*(H-pad*2);
-    return '<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(255,255,255,0.08)"/>';
+    return '<line x1="'+pad+'" x2="'+(W-pad)+'" y1="'+yy+'" y2="'+yy+'" stroke="rgba(98,99,101,0.35)"/>';
   }).join("");
   return '<svg viewBox="0 0 '+W+' '+H+'" class="w-100" role="img" aria-label="Precio histórico y proyección">'+
     grid+
