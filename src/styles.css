@@ -145,22 +145,22 @@
 
 /* ==========================================================================
    Sales Forcaster by Molten Logistics — mockup theme (Bootstrap 5 + brand)
-   Paleta: #f2930d naranja / #626365 gris / #1c3c2c verde profundo / #141c1c casi negro
+   Paleta: #f2930d naranja / rgba(255,255,255,0.5) gris / #0d0d0d verde profundo / #050505 casi negro
    ========================================================================== */
 :root {
   --ml-orange: #f2930d;
   --ml-orange-soft: #ffb547;
-  --ml-gray: #626365;
-  --ml-green: #1c3c2c;
-  --ml-ink: #141c1c;
-  --ml-surface: #1b2422;
+  --ml-gray: rgba(255,255,255,0.5);
+  --ml-green: #0d0d0d;
+  --ml-ink: #050505;
+  --ml-surface: #161616;
   --ml-line: rgba(242, 147, 13, 0.18);
-  --ml-text: #eef2ef;
-  --ml-text-dim: #a7aeab;
+  --ml-text: #ffffff;
+  --ml-text-dim: rgba(255,255,255,0.7);
 }
 
 body.ml-app {
-  background: radial-gradient(120% 90% at 15% -10%, #1c3c2c 0%, #141c1c 55%, #101616 100%);
+  background: radial-gradient(120% 90% at 15% -10%, #0d0d0d 0%, #050505 55%, #161616 100%);
   color: var(--ml-text);
   font-family: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
   min-height: 100vh;
@@ -176,7 +176,7 @@ body.ml-app {
 .ml-dim { color: var(--ml-text-dim); }
 
 .ml-card {
-  background: linear-gradient(180deg, rgba(28, 60, 44, 0.55), rgba(20, 28, 28, 0.85));
+  background: linear-gradient(180deg, #161616, #0d0d0d);
   border: 1px solid var(--ml-line);
   border-radius: 18px;
 }
@@ -211,13 +211,13 @@ body.ml-app {
 .ml-chip.active { background: var(--ml-orange); color: var(--ml-ink); border-color: var(--ml-orange); }
 
 .ml-nav {
-  background: rgba(20, 28, 28, 0.9);
+  background: rgba(5,5,5,0.9);
   border-bottom: 1px solid var(--ml-line);
   backdrop-filter: blur(10px);
 }
 .ml-tabbar {
   position: sticky; bottom: 0; z-index: 20;
-  background: rgba(20, 28, 28, 0.95);
+  background: rgba(5,5,5,0.95);
   border-top: 1px solid var(--ml-line);
   backdrop-filter: blur(10px);
   padding-bottom: env(safe-area-inset-bottom);
@@ -229,8 +229,8 @@ body.ml-app {
 .ml-row { border-bottom: 1px solid rgba(255,255,255,0.06); }
 .ml-row:last-child { border-bottom: 0; }
 
-.ml-pill-up { color: #6ee7a8; }
-.ml-pill-down { color: #ff8f7a; }
+.ml-pill-up { color: #f2930d; }
+.ml-pill-down { color: rgba(255,255,255,0.5); }
 
 .ml-logo-mark {
   width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto;
